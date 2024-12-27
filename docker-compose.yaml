@@ -1,0 +1,51 @@
+services:
+  hub: 
+    image: selenium/hub:4.20
+    ports:
+      - 4444:4444
+  chrome:
+    image: selenium/node-chrome:4.20
+    shm_size: '2g'
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_NODE_MAX_SESSIONS=4
+      - SE_VNC_NO_PASSWORD=1
+  firefox:
+    image: selenium/node-firefox:4.20
+    shm_size: '2g'
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_NODE_MAX_SESSIONS=4
+      - SE_VNC_NO_PASSWORD=1
+  vendor-portal:
+    image: leovilla71/selenium-test
+    depends_on:
+      - chrome
+    environment:
+      - BROWSER=chrome
+      - HUB_HOST=hub
+      - THREAD_COUNT=4
+      - TEST_SUITE=vendor-portal.xml
+    volumes:
+      - .\output\vendor-portal:/home/selenium-docker/test-output
+  flight-reservation:
+    image: leovilla71/selenium-test
+    depends_on:
+      - firefox
+    environment:
+      - BROWSER=firefox
+      - HUB_HOST=hub
+      - THREAD_COUNT=4
+      - TEST_SUITE=flight-reservation.xml
+    volumes:
+      - .\output\flight-reservation:/home/selenium-docker/test-output
