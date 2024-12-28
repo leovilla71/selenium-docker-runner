@@ -1,10 +1,13 @@
 pipeline {
     agent any
+    parameters {
+        choice choices: ['chrome', 'firefox'], description: 'Select Browser', name: 'BROWSER'
+    }
     stages {
         stage("start grid") {
             steps {
                 echo "======== executing (start grid) stage ========"
-                bat  "docker-compose -f grid.yaml up -d"
+                bat  "docker-compose -f grid.yaml up --scale ${BROWSER}=2 -d"
             }
             post {
                 success {
