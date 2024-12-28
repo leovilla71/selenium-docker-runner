@@ -1,43 +1,48 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage("run test"){
-            steps{
-                echo "======== executing run test stage ========"
-                bat  "docker-compose up"
+    stages {
+        stage("start grid") {
+            steps {
+                echo "======== executing (start grid) stage ========"
+                bat  "docker-compose -f grid.yaml up -d"
             }
-            post{
-                success{
-                    echo "======== run test stage executed successfully ========"
+            post {
+                success {
+                    echo "======== (start grid) stage executed successfully ========"
                 }
-                failure{
-                    echo "======== run test stage execution failed ========"
+                failure {
+                    echo "======== (start grid) stage execution failed ========"
                 }
             }
         }
-        stage("bring grid down"){
-            steps{
-                echo "======== executing bring grid down stage ========"
-                bat  "docker-compose down"
+        stage("run test") {
+            steps {
+                echo "======== executing (run test) stage ========"
+                bat  "docker-compose -f test-suites.yaml up"
             }
-            post{
-                success{
-                    echo "======== bring grid down stage executed successfully ========"
+            post {
+                success {
+                    echo "======== (run test) stage executed successfully ========"
                 }
-                failure{
-                    echo "======== bring grid down stage execution failed ========"
+                failure {
+                    echo "======== (run test) stage execution failed ========"
                 }
             }
         }
     }
-    post{
-        success{
+    post {
+        always {
+            echo "======== bring containers down ========"
+            bat  "docker-compose -f grid.yaml down"
+            bat  "docker-compose -f test-suites.yaml down"
+        }
+        success {
             echo "======== pipeline executed successfully ========"
         }
-        failure{
+        failure {
             echo "======== pipeline execution failed ========"
         }
-        aborted{
+        aborted {
             echo "======== pipeline execution aborted ========"
         }
     }
