@@ -7,7 +7,7 @@ pipeline {
         stage("start grid") {
             steps {
                 echo "======== executing (start grid) stage ========"
-                bat  "docker-compose -f grid.yaml up --scale ${BROWSER}=2 -d"
+                bat  "docker-compose -f grid.yaml up --scale ${params.BROWSER}=2 -d"
             }
             post {
                 success {
@@ -22,6 +22,11 @@ pipeline {
             steps {
                 echo "======== executing (run test) stage ========"
                 bat  "docker-compose -f test-suites.yaml up"
+                script {
+                    if(fileExists("output/flight-reservation/testng-failed.xml") || fileExists("output/vendor-portal/testng-failed.xml")) {
+                        error("======== failed test found ========")
+                    }
+                }
             }
             post {
                 success {
