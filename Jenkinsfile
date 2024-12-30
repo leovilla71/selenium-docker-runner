@@ -7,7 +7,7 @@ pipeline {
         stage("start grid") {
             steps {
                 echo "======== executing (start grid) stage ========"
-                bat  "docker-compose -f grid.yaml up --scale ${params.BROWSER}=2 -d"
+                bat  "docker-compose -f grid.yaml up --scale ${params.BROWSER}=1 -d"
             }
             post {
                 success {

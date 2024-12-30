@@ -4,16 +4,16 @@ services:
     environment:
       - BROWSER
       - HUB_HOST=hub
-      - THREAD_COUNT=4
+      - THREAD_COUNT=1
       - TEST_SUITE=vendor-portal.xml
     volumes:
-      - .\output\vendor-portal:/home/selenium-docker/test-output
+      - ./output/vendor-portal:/home/selenium-docker/test-output
   flight-reservation:
     image: leovilla71/selenium-test
     environment:
       - BROWSER
       - HUB_HOST=hub
-      - THREAD_COUNT=4
+      - THREAD_COUNT=1
       - TEST_SUITE=flight-reservation.xml
     volumes:
-      - .\output\flight-reservation:/home/selenium-docker/test-output
+      - ./output/flight-reservation:/home/selenium-docker/test-output
